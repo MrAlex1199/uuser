@@ -20,21 +20,49 @@ export default function MembersPage() {
   
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadMembers = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch('/api/members');
-        if (!res.ok) throw new Error('Failed to fetch members');
-        const data = await res.json();
-        setMembers(data.data || []);
-      } catch (error) {
-        console.error('Error loading members:', error);
-        setError('Error loading members. Please try again later.');
-      } finally {
-        setIsLoading(false);
+  // State สำหรับฟอร์มสมาชิก (ใช้เมื่อเพิ่ม/แก้ไข)
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "User",
+  });
+
+  // Load members from API (extract to function so we can retry)
+  const loadMembers = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch('/api/members');
+      const contentType = res.headers.get('content-type') || '';
+
+      if (!res.ok) {
+        let errMsg = `Failed to fetch members: ${res.status}`;
+        try {
+          if (contentType.includes('application/json')) {
+            const body = await res.json();
+            errMsg = body?.error || body?.message || JSON.stringify(body);
+          } else {
+            const txt = await res.text();
+            errMsg = txt;
+          }
+        } catch (e) {
+          // ignore parsing error
+        }
+        throw new Error(errMsg);
       }
-    };
+
+      const data = await res.json();
+      setMembers(data.data || []);
+      setError(null);
+    } catch (error) {
+      console.error('Error loading members:', error);
+      setError(error instanceof Error ? error.message : 'Error loading members');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadMembers();
   }, []);
 
@@ -101,7 +129,15 @@ export default function MembersPage() {
       <Sidebar />
       <main className="flex-1 p-6 md:p-10 overflow-y-auto">
         <h1 className="text-3xl font-semibold mb-6 text-slate-800 dark:text-white">รายการสมาชิก</h1>
-        {error && <p className="text-red-500">{error}</p>}
+        {error && (
+          <div className="mb-4">
+            <p className="text-red-500">{error}</p>
+            <div className="mt-2">
+              <button onClick={loadMembers} className="px-3 py-1 bg-blue-600 text-white rounded-md mr-2">ลองใหม่</button>
+              <button onClick={() => { navigator.clipboard?.writeText(error); }} className="px-3 py-1 border rounded-md">คัดลอกข้อผิดพลาด</button>
+            </div>
+          </div>
+        )}
         <div className="bg-white dark:bg-[#1e293b] rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
             <div className="p-4 flex justify-between items-center border-b border-slate-200 dark:border-slate-700">
                 <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-colors">

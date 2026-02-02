@@ -15,13 +15,11 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon, label }) => {
   const isActive = pathname === href;
 
   return (
-    (<Link
+    <Link
       href={href}
-      passHref
       className={`group flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors ${
         isActive ? 'text-white' : ''
       }`}>
-
       <div
         className={`p-3 rounded-lg transition-colors ${
           isActive ? 'bg-[var(--primary)]' : 'group-hover:bg-white/10'
@@ -30,8 +28,7 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon, label }) => {
         <span className="material-icons-outlined">{icon}</span>
       </div>
       <span className="text-[10px] font-medium">{label}</span>
-
-    </Link>)
+    </Link>
   );
 };
 
@@ -47,10 +44,12 @@ const Sidebar = () => {
         <NavItem href="/dashboard/expired" icon="event_busy" label="หมดประกัน" />
         <NavItem href="/dashboard/members" icon="people" label="สมาชิก" />
       </nav>
-      <Link href="/login" passHref legacyBehavior>
-        <a className="text-slate-400 hover:text-red-500 transition-colors">
-          <span className="material-icons-outlined">logout</span>
-        </a>
+      <Link
+        href="/login"
+        className="text-slate-400 hover:text-red-500 transition-colors">
+
+        <span className="material-icons-outlined">logout</span>
+
       </Link>
     </aside>
   );

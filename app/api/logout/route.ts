@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    cookies().delete('token');
+    (await cookies()).delete('token');
     return NextResponse.json({ message: 'Logout successful' });
   } catch (error) {
     console.error(error);

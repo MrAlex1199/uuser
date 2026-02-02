@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import Sidebar from "../components/Sidebar";
-import ThemeSwitcher from "../components/ThemeSwitcher";
 
 // กำหนด Type สำหรับข้อมูล Asset
 interface Asset {
@@ -224,9 +223,8 @@ export default function AssetDashboard() {
   // --- Render ---
 
   return (
-    <div style={{'--background': '#0f172a', '--card-background': 'rgba(30, 41, 59, 0.5)', '--text': '#e2e8f0', '--primary': '#3b82f6'} as React.CSSProperties} 
-         className="bg-[var(--background)] text-[var(--text)] min-h-screen flex font-sans bg-cover bg-center"
-         style={{ backgroundImage: "url('https://source.unsplash.com/random/1920x1080?abstract')" }}>
+    <div style={{'--background': '#0f172a', '--card-background': 'rgba(30, 41, 59, 0.5)', '--text': '#e2e8f0', '--primary': '#3b82f6', backgroundImage: "url('https://source.unsplash.com/random/1920x1080?abstract')"} as React.CSSProperties} 
+         className="bg-[var(--background)] text-[var(--text)] min-h-screen flex font-sans bg-cover bg-center">
       <Sidebar />
 
       {/* Main Content */}
@@ -234,7 +232,6 @@ export default function AssetDashboard() {
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
           <h1 className="text-2xl lg:text-3xl font-semibold text-white">ประกันโครงการ SC</h1>
           <div className="flex items-center gap-4">
-            <ThemeSwitcher />
             <div className="flex items-center gap-3 px-4 py-2 bg-[var(--card-background)] backdrop-blur-sm border border-white/10 text-white rounded-full">
               <span className="text-sm font-medium">User: <span className="font-bold">{user?.name} ({user?.role})</span></span>
             </div>
@@ -331,7 +328,7 @@ export default function AssetDashboard() {
                   </tr>
                 ) : (
                   filteredAssets.map((asset) => (
-                    <tr key={asset.id} className="hover:bg-black/10 transition-colors">
+                    <tr key={asset._id || asset.id || `${asset.scCode}-${asset.projectName}`} className="hover:bg-black/10 transition-colors">
                       <td className="px-6 py-4 text-sm font-medium text-slate-200">{asset.scCode}</td>
                       <td className="px-6 py-4 text-sm text-slate-300">{asset.projectName}</td>
                       <td className="px-6 py-4 text-center">

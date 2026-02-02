@@ -127,7 +127,7 @@ export default function WarrantyPage() {
                             warrantyAssets.map(a => {
                                 const end = getEndDate(a.startDate, a.duration || "1");
                                 return (
-                                    <tr key={a.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                    <tr key={a._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                                         <td className="px-4 py-3 font-medium">{a.scCode}</td>
                                         <td className="px-4 py-3">{a.projectName}</td>
                                         <td className="px-4 py-3 text-center">

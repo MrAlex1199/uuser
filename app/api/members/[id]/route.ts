@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
-import Member from '@/models/Member';
+import User from '@/models/User';
 
 interface ParamsPromise {
   id: string;
@@ -14,14 +14,14 @@ export async function GET(
     await dbConnect();
     const { id } = await params;
 
-    const member = await Member.findById(id);
-    if (!member) {
-      return NextResponse.json({ success: false, error: 'Member not found' }, { status: 404 });
+    const user = await User.findById(id);
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, data: member });
+    return NextResponse.json({ success: true, data: user });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Error fetching member' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Error fetching user' }, { status: 500 });
   }
 }
 
@@ -34,14 +34,14 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    const member = await Member.findByIdAndUpdate(id, body, { new: true, runValidators: true });
-    if (!member) {
-      return NextResponse.json({ success: false, error: 'Member not found' }, { status: 404 });
+    const user = await User.findByIdAndUpdate(id, body, { new: true, runValidators: true });
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, data: member });
+    return NextResponse.json({ success: true, data: user });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Error updating member';
+    const errorMessage = error instanceof Error ? error.message : 'Error updating user';
     return NextResponse.json({ success: false, error: errorMessage }, { status: 400 });
   }
 }
@@ -54,12 +54,12 @@ export async function DELETE(
     await dbConnect();
     const { id } = await params;
 
-    const member = await Member.findByIdAndDelete(id);
-    if (!member) {
-      return NextResponse.json({ success: false, error: 'Member not found' }, { status: 404 });
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, message: 'Member deleted successfully' });
+    return NextResponse.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {
     return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Error deleting member' }, { status: 500 });
   }

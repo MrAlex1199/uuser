@@ -169,7 +169,7 @@ export default function ExpiredPage() {
                             </tr>
                         ) : (
                             expiredAssets.map((asset) => (
-                                <tr key={asset.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors text-slate-700 dark:text-slate-200">
+                                <tr key={asset._id || asset.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors text-slate-700 dark:text-slate-200">
                                     <td className="px-4 py-4 text-sm font-medium">{asset.scCode}</td>
                                     <td className="px-4 py-4 text-sm">{asset.projectName}</td>
                                     <td className="px-4 py-4 text-center">

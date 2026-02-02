@@ -23,6 +23,14 @@ const UserSchema = new mongoose.Schema({
     enum: ['Admin', 'User'],
     default: 'User',
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

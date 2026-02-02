@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 
-interface Member {
-  id: number;
+interface User {
+  _id?: string;
+  id?: number;
   name: string;
   email: string;
   password?: string;
@@ -12,9 +13,11 @@ interface Member {
 }
 
 export default function MembersPage() {
-  const [members, setMembers] = useState<Member[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
       name: "",
@@ -23,44 +26,92 @@ export default function MembersPage() {
       role: "User"
   });
 
-  useEffect(() => {
-    const stored = localStorage.getItem("member_data");
-    if (stored) {
-        setMembers(JSON.parse(stored));
-    } else {
-        const initial = [{id: 1, name: "Admin System", email: "admin@mail.com", password: "1234", role: "Admin"}];
-        setMembers(initial);
-        localStorage.setItem("member_data", JSON.stringify(initial));
+  // Load members from API
+  const loadMembers = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch('/api/members');
+      const contentType = res.headers.get('content-type') || '';
+
+      if (!res.ok) {
+        let errMsg = `Failed to fetch members: ${res.status}`;
+        try {
+          if (contentType.includes('application/json')) {
+            const body = await res.json();
+            errMsg = body?.error || body?.message || JSON.stringify(body);
+          } else {
+            const txt = await res.text();
+            errMsg = txt;
+          }
+        } catch (e) {
+          // ignore parse errors
+        }
+        throw new Error(errMsg);
+      }
+
+      const data = await res.json();
+      setUsers(data.data || []);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading members:', err);
+      setError(err instanceof Error ? err.message : 'Error loading members');
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    loadMembers();
   }, []);
 
-  const saveToStorage = (data: Member[]) => {
-      localStorage.setItem("member_data", JSON.stringify(data));
-      setMembers(data);
-  };
 
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     if(!formData.name || !formData.email) return alert('กรอกข้อมูลให้ครบ');
 
-    if (editingId) {
-        const updated = members.map(m => m.id === editingId ? { ...m, ...formData, id: m.id } : m);
-        saveToStorage(updated);
-    } else {
-        const newItem = { id: Date.now(), ...formData };
-        saveToStorage([...members, newItem]);
+    try {
+      if (editingId) {
+        const res = await fetch(`/api/members/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+        if (!res.ok) throw new Error('Failed to update member');
+        const updated = await res.json();
+        setUsers((prev) => prev.map(u => u._id === editingId ? updated.data : u));
+      } else {
+        const res = await fetch('/api/members', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+        if (!res.ok) throw new Error('Failed to create user');
+        const created = await res.json();
+        setUsers((prev) => [...prev, created.data]);
+      }
+      closeModal();
+    } catch (error) {
+      console.error('Error saving member:', error);
+      alert(error instanceof Error ? error.message : 'Error saving member');
     }
-    closeModal();
   };
 
-  const handleEdit = (m: Member) => {
-      setEditingId(m.id);
-      setFormData({ name: m.name, email: m.email, password: m.password || "", role: m.role });
+  const handleEdit = (u: User) => {
+      setEditingId(u._id || null);
+      setFormData({ name: u.name, email: u.email, password: u.password || "", role: u.role });
       setIsModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: string) => {
       if(confirm('ลบสมาชิก?')) {
-          saveToStorage(members.filter(m => m.id !== id));
+          try {
+            const res = await fetch(`/api/members/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Failed to delete user');
+            setUsers((prev) => prev.filter(u => u._id !== id));
+          } catch (error) {
+            console.error('Error deleting member:', error);
+            alert(error instanceof Error ? error.message : 'Error deleting member');
+          }
       }
   };
 
@@ -75,6 +126,15 @@ export default function MembersPage() {
       <Sidebar />
       <main className="flex-1 p-6 md:p-10 overflow-y-auto">
         <h1 className="text-3xl font-semibold mb-6 text-slate-800 dark:text-white">รายการสมาชิก</h1>
+        {error && (
+          <div className="mb-4">
+            <p className="text-red-500">{error}</p>
+            <div className="mt-2">
+              <button onClick={loadMembers} className="px-3 py-1 bg-blue-600 text-white rounded-md mr-2">ลองใหม่</button>
+              <button onClick={() => { navigator.clipboard?.writeText(error); }} className="px-3 py-1 border rounded-md">คัดลอกข้อผิดพลาด</button>
+            </div>
+          </div>
+        )}
         <div className="bg-white dark:bg-[#1e293b] rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
             <div className="p-4 flex justify-between items-center border-b border-slate-200 dark:border-slate-700">
                 <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-colors">
@@ -91,29 +151,36 @@ export default function MembersPage() {
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
-                    {members.map(m => (
-                        <tr key={m.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                            <td className="px-6 py-4">{m.name}</td>
-                            <td className="px-6 py-4 text-slate-500">{m.email}</td>
-                            <td className="px-6 py-4">
-                                <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${m.role === 'Admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'}`}>
-                                    {m.role}
-                                </span>
-                            </td>
-                            <td className="px-6 py-4 text-center">
-                                <button onClick={() => handleEdit(m)} className="p-1 hover:text-blue-600 mr-2"><span className="material-icons-outlined text-xl">edit</span></button>
-                                <button onClick={() => handleDelete(m.id)} className="p-1 hover:text-red-500"><span className="material-icons-outlined text-xl">delete</span></button>
-                            </td>
-                        </tr>
-                    ))}
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={4} className="py-16 text-center text-slate-400">กำลังโหลด...</td>
+                    </tr>
+                  ) : users.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="py-16 text-center text-slate-400">
+                        <span className="material-icons-outlined text-4xl mb-2">group_off</span>
+                        <div>ยังไม่มีข้อมูลสมาชิก</div>
+                      </td>
+                    </tr>
+                  ) : (
+                    users.map(u => (
+                      <tr key={u._id || u.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                          <td className="px-6 py-4">{u.name}</td>
+                          <td className="px-6 py-4 text-slate-500">{u.email}</td>
+                          <td className="px-6 py-4">
+                              <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${u.role === 'Admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'}`}>
+                                  {u.role}
+                              </span>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                              <button onClick={() => handleEdit(u)} className="p-1 hover:text-blue-600 mr-2"><span className="material-icons-outlined text-xl">edit</span></button>
+                              <button onClick={() => handleDelete(u._id || '')} className="p-1 hover:text-red-500"><span className="material-icons-outlined text-xl">delete</span></button>
+                          </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
             </table>
-            {members.length === 0 && (
-                <div className="py-16 text-center text-slate-400">
-                    <span className="material-icons-outlined text-4xl mb-2">group_off</span>
-                    <p>ยังไม่มีข้อมูลสมาชิก</p>
-                </div>
-            )}
         </div>
       </main>
 
