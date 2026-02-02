@@ -230,7 +230,7 @@ export default function AssetDashboard() {
       {/* Main Content */}
       <main className="flex-1 p-6 lg:p-10 overflow-y-auto bg-black/10 backdrop-blur-3xl">
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-          <h1 className="text-2xl lg:text-3xl font-semibold text-white">ประกันโครงการ SC</h1>
+          <h1 className="text-2xl lg:text-3xl font-semibold text-white">SC-MANAGEMENT</h1>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 px-4 py-2 bg-[var(--card-background)] backdrop-blur-sm border border-white/10 text-white rounded-full">
               <span className="text-sm font-medium">User: <span className="font-bold">{user?.name} ({user?.role})</span></span>
