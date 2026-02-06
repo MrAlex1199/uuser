@@ -50,7 +50,7 @@ export default function WarrantyPage() {
 
   const exportToExcel = () => {
      if (warrantyAssets.length === 0) return alert('ไม่มีข้อมูล');
-     const data = warrantyAssets.map(a => {
+     const data = warrantyAssets.map(({ createdAt, updatedAt, ...a }) => {
         const end = getEndDate(a.startDate, a.duration);
         return {
             'SC-CODE': a.scCode,

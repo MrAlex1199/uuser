@@ -112,7 +112,8 @@ export default function ExpiredPage() {
 
   const exportToExcel = () => {
     if (expiredAssets.length === 0) return alert('ไม่มีข้อมูลให้ Export');
-    const data = expiredAssets.map(({ id, ...rest }) => rest);
+    // Exclude possible createdAt/updatedAt, version key and internal id before export
+    const data = expiredAssets.map(({ createdAt, updatedAt, __v, id, ...rest }) => rest);
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Expired_Assets");

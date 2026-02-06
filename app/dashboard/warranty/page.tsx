@@ -64,19 +64,19 @@ export default function WarrantyPage() {
     return isWarranty && matchesSearch;
   });
 
-  const exportToExcel = () => {
-     if (warrantyAssets.length === 0) return alert('ไม่มีข้อมูล');
-     const data = warrantyAssets.map(a => {
+    const exportToExcel = () => {
+      if (warrantyAssets.length === 0) return alert('ไม่มีข้อมูล');
+      const data = warrantyAssets.map(({ __v, createdAt, updatedAt, ...a }) => {
         const end = getEndDate(a.startDate, a.duration);
         return {
-            'SC-CODE': a.scCode,
-            'ชื่อโครงการ': a.projectName,
-            'ระยะเวลา': a.duration,
-            'วันเริ่ม': new Date(a.startDate).toLocaleDateString('th-TH'),
-            'วันหมด': end?.toLocaleDateString('th-TH'),
-            'หมายเหตุ': a.remark
+          'SC-CODE': a.scCode,
+          'ชื่อโครงการ': a.projectName,
+          'ระยะเวลา': a.duration,
+          'วันเริ่ม': new Date(a.startDate).toLocaleDateString('th-TH'),
+          'วันหมด': end?.toLocaleDateString('th-TH'),
+          'หมายเหตุ': a.remark
         };
-     });
+      });
      const ws = XLSX.utils.json_to_sheet(data);
      const wb = XLSX.utils.book_new();
      XLSX.utils.book_append_sheet(wb, ws, "InWarranty");

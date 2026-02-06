@@ -94,7 +94,7 @@ export default function AssetDashboard() {
 
   const calculateWarranty = () => {
     if (!formData.startDate) return;
-
+      const dataToExport = assets.map(({ createdAt, updatedAt, __v, id, ...rest }) => rest);
     const start = new Date(formData.startDate);
     const durationYears = parseInt(formData.duration || "1");
     const end = new Date(start);
@@ -199,7 +199,7 @@ export default function AssetDashboard() {
   };
 
   const exportToExcel = () => {
-    const dataToExport = assets.map(({ id, ...rest }) => rest);
+    const dataToExport = assets.map(({ createdAt, updatedAt, id, ...rest }) => rest);
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Asset Data");
