@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ThemeInitializer from './components/ThemeInitializer';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
       </head>
       <body className="font-display"> {/* เพิ่ม class font-display ถ้า config tailwind ไว้ */}
+        <ThemeInitializer />
         {children}
       </body>
     </html>

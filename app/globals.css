@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f172a;
-  --card-background: rgba(30, 41, 59, 0.5);
-  --text: #e2e8f0;
-  --primary: #3b82f6;
+  --background: #f8fafc;
+  --card-background: rgba(255, 255, 255, 0.95);
+  --text: #1f2937;
+  --primary: #2563eb;
+  --border: rgba(100, 116, 139, 0.2);
 }
 
 @theme inline {
@@ -12,15 +13,6 @@
   --color-foreground: var(--text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --card-background: rgba(20, 20, 20, 0.5);
-    --text: #ededed;
-    --primary: #3b82f6; /* You might want a different primary for dark mode */
-  }
 }
 
 body {

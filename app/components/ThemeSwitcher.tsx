@@ -2,52 +2,88 @@
 
 import React, { useState, useEffect } from 'react';
 
+const lightTheme = {
+  '--background': '#f8fafc',
+  '--card-background': 'rgba(255, 255, 255, 0.95)',
+  '--text': '#1f2937',
+  '--primary': '#2563eb',
+  '--border': 'rgba(100, 116, 139, 0.2)',
+};
+
+const darkTheme = {
+  '--background': '#0b1220',
+  '--card-background': 'rgba(15, 23, 42, 0.88)',
+  '--text': '#e6eef8',
+  '--primary': '#60a5fa',
+  '--border': 'rgba(255,255,255,0.08)',
+};
+
 const themes = [
-  { name: 'Default', colors: { '--background': '#0f172a', '--card-background': 'rgba(30, 41, 59, 0.5)', '--text': '#e2e8f0', '--primary': '#3b82f6' } },
-  { name: 'Mint', colors: { '--background': '#0f2a2a', '--card-background': 'rgba(20, 89, 89, 0.5)', '--text': '#d1fae5', '--primary': '#6ee7b7' } },
-  { name: 'Rose', colors: { '--background': '#2a0f1a', '--card-background': 'rgba(89, 20, 50, 0.5)', '--text': '#fce7f3', '--primary': '#f472b6' } },
-  { name: 'Indigo', colors: { '--background': '#1a0f2a', '--card-background': 'rgba(50, 20, 89, 0.5)', '--text': '#e0e7ff', '--primary': '#818cf8' } },
+  { name: 'Default', colors: lightTheme },
+  { name: 'Dark', colors: darkTheme },
 ];
 
-const ThemeSwitcher = () => {
+const applyTheme = (themeName: string) => {
+  const theme = themes.find((t) => t.name === themeName);
+  if (!theme) return;
+  Object.entries(theme.colors).forEach(([property, value]) => {
+    document.documentElement.style.setProperty(property, value as string);
+  });
+  if (themeName === 'Dark') document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+};
+
+const ThemeSwitcher: React.FC = () => {
   const [activeTheme, setActiveTheme] = useState('Default');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme-name') || 'Default';
-    setActiveTheme(savedTheme);
-    const theme = themes.find(t => t.name === savedTheme);
-    if (theme) {
-      Object.entries(theme.colors).forEach(([property, value]) => {
-        document.documentElement.style.setProperty(property, value);
-      });
-    }
+    const saved = localStorage.getItem('theme-name');
+    let initial = 'Default';
+    if (saved && themes.find((t) => t.name === saved)) initial = saved;
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) initial = 'Dark';
+    setActiveTheme(initial);
+    applyTheme(initial);
   }, []);
 
-  const changeTheme = (name: string) => {
-    const theme = themes.find(t => t.name === name);
-    if (theme) {
-      setActiveTheme(name);
-      localStorage.setItem('theme-name', name);
-      Object.entries(theme.colors).forEach(([property, value]) => {
-        document.documentElement.style.setProperty(property, value);
-      });
-    }
+  const toggleTheme = () => {
+    const next = activeTheme === 'Dark' ? 'Default' : 'Dark';
+    setActiveTheme(next);
+    localStorage.setItem('theme-name', next);
+    applyTheme(next);
   };
 
+  const isDark = activeTheme === 'Dark';
+
   return (
-    <div className="flex items-center gap-2 p-2 rounded-lg bg-[var(--card-background)] backdrop-blur-sm border border-white/10">
-      {themes.map(theme => (
-        <button
-          key={theme.name}
-          onClick={() => changeTheme(theme.name)}
-          className={`px-3 py-1 text-sm rounded-md transition-colors ${
-            activeTheme === theme.name ? 'bg-[var(--primary)] text-white' : 'hover:bg-white/10'
+    <button
+      aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
+      onClick={toggleTheme}
+      className="inline-flex items-center p-1 rounded-full bg-[var(--card-background)] border backdrop-blur-sm shadow-sm"
+      style={{ borderColor: 'var(--border)' }}
+      title="Toggle theme"
+    >
+      <div
+        className={`relative flex items-center w-14 h-7 rounded-full transition-colors duration-300 ${
+          isDark ? 'bg-[#102033]' : 'bg-white/90'
+        }`}
+      >
+        <span
+          className={`absolute left-1 top-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] transition-transform duration-300 ${
+            isDark ? 'translate-x-7 bg-[var(--primary)] text-white' : 'translate-x-0 bg-[var(--primary)]/10 text-[var(--primary)]'
           }`}
         >
-          {theme.name}
-        </button>
-      ))}
-    </div>
+          {isDark ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="currentColor" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8 1.8-1.8zM1 13h3v-2H1v2zm10 9h2v-3h-2v3zm7.03-16.24l1.79-1.8-1.79-1.79-1.8 1.79 1.8 1.8zM20 11v2h3v-2h-3zM4.22 19.78l1.8-1.8-1.8-1.79-1.79 1.79 1.79 1.8zM12 6a6 6 0 100 12 6 6 0 000-12z" fill="currentColor" />
+            </svg>
+          )}
+        </span>
+      </div>
+    </button>
   );
 };
 

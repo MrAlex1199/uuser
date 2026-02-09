@@ -66,7 +66,7 @@ export default function WarrantyPage() {
 
     const exportToExcel = () => {
       if (warrantyAssets.length === 0) return alert('ไม่มีข้อมูล');
-      const data = warrantyAssets.map(({ __v, createdAt, updatedAt, ...a }) => {
+      const data = warrantyAssets.map((a) => {
         const end = getEndDate(a.startDate, a.duration);
         return {
           'SC-CODE': a.scCode,
@@ -84,20 +84,20 @@ export default function WarrantyPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-[#0f172a] font-sans">
+    <div className="flex min-h-screen bg-[var(--background)] font-sans">
       <Sidebar />
       <main className="flex-1 p-6 md:p-10 overflow-y-auto">
         <header className="mb-8">
-            <h1 className="text-2xl md:text-3xl font-semibold text-slate-800 dark:text-white">รายการโครงการที่อยู่ในประกัน</h1>
-            <p className="text-slate-500 text-sm">ตรวจสอบข้อมูลการรับประกัน</p>
+          <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text)]">รายการโครงการที่อยู่ในประกัน</h1>
+          <p className="text-sm text-[var(--text)]/70">ตรวจสอบข้อมูลการรับประกัน</p>
         </header>
 
-        <div className="bg-white dark:bg-[#1e293b] rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="bg-[var(--card-background)] rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="p-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-100 dark:border-slate-700">
                 <div className="relative w-full md:w-80">
                     <span className="material-icons-outlined absolute left-3 top-2.5 text-slate-400 text-sm">search</span>
                     <input 
-                        className="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-600/20 text-slate-900 dark:text-slate-100" 
+                      className="w-full pl-10 pr-4 py-2 text-sm bg-[var(--card-background)] border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-[var(--primary)]/20 text-[var(--text)]" 
                         placeholder="ค้นหาชื่อ หรือ SC-CODE..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -112,7 +112,7 @@ export default function WarrantyPage() {
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm">
                     <thead>
-                        <tr className="bg-slate-50 dark:bg-slate-900/50 text-[12px] uppercase text-slate-500">
+                        <tr className="bg-slate-50 dark:bg-slate-900/50 text-[12px] uppercase" style={{ borderColor: 'var(--border)' }}>
                             <th className="px-4 py-3 font-bold">SC-CODE</th>
                             <th className="px-4 py-3 font-bold">ชื่อโครงการ/รายการ</th>
                             <th className="px-4 py-3 font-bold text-center">สถานะประกัน</th>
@@ -120,9 +120,9 @@ export default function WarrantyPage() {
                             <th className="px-4 py-3 font-bold">REMARK</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-200">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50 ">
                         {warrantyAssets.length === 0 ? (
-                            <tr><td colSpan={5} className="px-4 py-16 text-center text-slate-400">ไม่พบรายการที่อยู่ในประกัน</td></tr>
+                            <tr><td colSpan={5} className="px-4 py-16 text-center">ไม่พบรายการที่อยู่ในประกัน</td></tr>
                         ) : (
                             warrantyAssets.map(a => {
                                 const end = getEndDate(a.startDate, a.duration || "1");

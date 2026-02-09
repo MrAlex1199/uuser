@@ -73,31 +73,31 @@ export default function ExpiredPage() {
 
   const exportToExcel = () => {
     if (expiredAssets.length === 0) return alert('ไม่มีข้อมูลให้ Export');
-        // Exclude possible createdAt/updatedAt and internal id
-        const data = expiredAssets.map(({ createdAt, updatedAt, id, ...rest }) => rest);
+        // Export assets as-is
+        const data = expiredAssets.map((a) => ({ ...a }));
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Expired_Assets");
     XLSX.writeFile(wb, "Report_Expired_Assets.xlsx");
   };
 
-  return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-[#0f172a] font-sans">
+    return (
+        <div className="flex min-h-screen bg-[var(--background)]">
       <Sidebar /> {/* เรียกใช้ Sidebar */}
       
       <main className="flex-1 p-6 md:p-10 overflow-y-auto">
         <header className="mb-8">
-            <h1 className="text-2xl md:text-3xl font-semibold text-slate-800 dark:text-white">รายการโครงการที่หมดประกัน</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text)]">รายการโครงการที่หมดประกัน</h1>
         </header>
 
-        <div className="bg-white dark:bg-[#1e293b] rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="bg-[var(--card-background)] rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="p-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-100 dark:border-slate-700">
                 <div className="relative w-full md:w-80">
                     <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
                         <span className="material-icons-outlined text-sm">search</span>
                     </span>
                     <input 
-                        className="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-600/20 text-slate-900 dark:text-slate-100" 
+                        className="w-full pl-10 pr-4 py-2 text-sm bg-[var(--card-background)] border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-[var(--primary)]/20 text-[var(--text)]" 
                         placeholder="ค้นหาชื่อ หรือ SC-CODE..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -113,12 +113,12 @@ export default function ExpiredPage() {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
-                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">SC-CODE</th>
-                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">ชื่อโครงการ</th>
-                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">สถานะ</th>
-                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">ระยะเวลาประกัน</th>
-                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">REMARK</th>
-                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">จัดการ</th>
+                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">SC-CODE</th>
+                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">ชื่อโครงการ</th>
+                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">สถานะ</th>
+                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">ระยะเวลาประกัน</th>
+                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">REMARK</th>
+                            <th className="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">

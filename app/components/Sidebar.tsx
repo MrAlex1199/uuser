@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import ThemeSwitcher from './ThemeSwitcher';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
@@ -59,6 +59,7 @@ const Sidebar = () => {
         <NavItem href="/dashboard/expired" icon="event_busy" label="หมดประกัน" />
         <NavItem href="/dashboard/members" icon="people" label="สมาชิก" />
       </nav>
+<ThemeSwitcher />
       <button
         onClick={handleLogout}
         className="text-slate-400 hover:text-red-500 transition-colors">

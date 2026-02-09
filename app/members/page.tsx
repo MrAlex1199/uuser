@@ -127,7 +127,7 @@ export default function MembersPage() {
       <main className="flex-1 p-6 md:p-10 overflow-y-auto">
         <h1 className="text-3xl font-semibold mb-6 text-slate-800 dark:text-white">รายการสมาชิก</h1>
         {error && (
-          <div className="mb-4">
+            <div className="mb-4">
             <p className="text-red-500">{error}</p>
             <div className="mt-2">
               <button onClick={loadMembers} className="px-3 py-1 bg-blue-600 text-white rounded-md mr-2">ลองใหม่</button>
@@ -166,7 +166,7 @@ export default function MembersPage() {
                     users.map(u => (
                       <tr key={u._id || u.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                           <td className="px-6 py-4">{u.name}</td>
-                          <td className="px-6 py-4 text-slate-500">{u.email}</td>
+                          <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{u.email}</td>
                           <td className="px-6 py-4">
                               <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${u.role === 'Admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'}`}>
                                   {u.role}
@@ -190,15 +190,15 @@ export default function MembersPage() {
                  <h2 className="text-xl font-semibold mb-6 text-slate-800 dark:text-white">{editingId ? "แก้ไขข้อมูล" : "เพิ่มสมาชิก"}</h2>
                  <div className="space-y-4">
                      <div>
-                         <label className="block text-sm mb-1 text-slate-500">ชื่อ</label>
+                         <label className="block text-sm mb-1 text-slate-500 dark:text-slate-400">ชื่อ</label>
                          <input className="w-full p-2.5 border rounded-lg bg-transparent dark:border-slate-600 dark:text-white" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                      </div>
                      <div>
-                         <label className="block text-sm mb-1 text-slate-500">อีเมล</label>
+                         <label className="block text-sm mb-1 text-slate-500 dark:text-slate-400">อีเมล</label>
                          <input className="w-full p-2.5 border rounded-lg bg-transparent dark:border-slate-600 dark:text-white" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                      </div>
                      <div>
-                         <label className="block text-sm mb-1 text-slate-500">บทบาท</label>
+                         <label className="block text-sm mb-1 text-slate-500 dark:text-slate-400">บทบาท</label>
                          <select className="w-full p-2.5 border rounded-lg bg-transparent dark:border-slate-600 dark:text-white" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
                              <option value="Admin">Admin</option>
                              <option value="User">User</option>

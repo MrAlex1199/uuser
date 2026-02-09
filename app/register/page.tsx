@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import ThemeSwitcher from "../components/ThemeSwitcher";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,10 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme-name') || 'Default';
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,25 +45,29 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center text-gray-900">
+    <div className="flex items-center justify-center min-h-screen" style={{ background: 'var(--background)' }}>
+      <div className="absolute top-4 right-4">
+        <ThemeSwitcher />
+      </div>
+      <div className="w-full max-w-md p-8 space-y-6 rounded-lg shadow-md" style={{ background: 'var(--card-background)', backdropFilter: 'blur(10px)' }}>
+        <h1 className="text-2xl font-bold text-center" style={{ color: 'var(--text)' }}>
           Create an account
         </h1>
         <form className="space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="p-4 text-sm text-red-700 bg-red-100 border border-red-400 rounded-md">
+            <div className="p-4 text-sm rounded-md bg-red-500/20 border border-red-500/30" style={{ color: '#fca5a5' }}>
               {error}
             </div>
           )}
           <div>
             <label
               htmlFor="name"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium block mb-1"
+              style={{ color: 'var(--text)' }}
             >
               Name
             </label>
-            <input
+              <input
               id="name"
               name="name"
               type="text"
@@ -66,18 +75,20 @@ export default function RegisterPage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="block w-full px-3 py-2 mt-1 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full px-3 py-2 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary)]"
+                style={{ background: 'var(--card-background)', color: 'var(--text)', border: '1px solid rgba(0,0,0,0.06)' }}
               placeholder="Your Name"
             />
           </div>
           <div>
             <label
               htmlFor="email"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium block mb-1"
+              style={{ color: 'var(--text)' }}
             >
               Email address
             </label>
-            <input
+              <input
               id="email"
               name="email"
               type="email"
@@ -85,18 +96,20 @@ export default function RegisterPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full px-3 py-2 mt-1 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full px-3 py-2 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary)]"
+                style={{ background: 'var(--card-background)', color: 'var(--text)', border: '1px solid rgba(0,0,0,0.06)' }}
               placeholder="you@example.com"
             />
           </div>
           <div>
             <label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium block mb-1"
+              style={{ color: 'var(--text)' }}
             >
               Password
             </label>
-            <input
+              <input
               id="password"
               name="password"
               type="password"
@@ -104,14 +117,16 @@ export default function RegisterPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full px-3 py-2 mt-1 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full px-3 py-2 mt-1 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary)]"
+                style={{ background: 'var(--card-background)', color: 'var(--text)', border: '1px solid rgba(0,0,0,0.06)' }}
               placeholder="••••••••"
             />
           </div>
           <div>
             <label
               htmlFor="role"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium block mb-1"
+              style={{ color: 'var(--text)' }}
             >
               Role
             </label>
@@ -121,7 +136,8 @@ export default function RegisterPage() {
               required
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary)]"
+              style={{ background: 'var(--card-background)', color: 'var(--text)', border: '1px solid rgba(0,0,0,0.06)' }}
             >
               <option value="User">User</option>
               <option value="Admin">Admin</option>
@@ -131,7 +147,8 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="w-full px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50"
+              style={{ background: 'var(--primary)', color: 'white' }}
             >
               {loading ? "Registering..." : "Register"}
             </button>
